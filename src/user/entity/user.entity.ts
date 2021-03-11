@@ -1,8 +1,8 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity({ name: 'users' })
+@Entity({ name: 'users'})
 export class User {
-  @PrimaryGeneratedColumn({ type: 'integer' })
+  @PrimaryGeneratedColumn({ type: 'int' })
   public id: number;
 
   @Column({ name: 'email', nullable: false, unique: true })
