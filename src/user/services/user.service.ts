@@ -34,4 +34,8 @@ export class UserService implements IUserService {
 
     return newUser;
   }
+
+  public async checkUserByEmail(email: string): Promise<User> {
+    return await this.userRepo.findOne({ where: { email } });
+  }
 }
