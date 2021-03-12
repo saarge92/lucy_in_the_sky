@@ -1,19 +1,17 @@
-import { Module } from '@nestjs/common';
-import { MemcachedModule } from '@nestcloud/memcached';
+import { CacheModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Good } from './entity/good.entity';
 import { GoodController } from './controllers/good.controller';
+import { GoodService } from './services/good.service';
 
 @Module({
   imports: [
-    MemcachedModule.register({
-      uri: [process.env.MEMCAHED_URI],
-      retries: 4,
-    }),
+    CacheModule.register(),
     TypeOrmModule.forFeature([Good]),
   ],
   controllers: [GoodController],
-  exports: [MemcachedModule]
+  providers: [GoodService],
+  exports: [],
 })
 export class GoodModule {
 }

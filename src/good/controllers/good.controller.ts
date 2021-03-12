@@ -10,6 +10,6 @@ import { Controller } from '@nestjs/common';
 })
 @Controller('goods')
 export class GoodController {
-  constructor(public readonly goodService: GoodService) {
+  constructor(public readonly service: GoodService) {
   }
 }
