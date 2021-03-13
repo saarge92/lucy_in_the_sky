@@ -7,6 +7,7 @@ export class GoodUpdateDto {
     title: 'Name of good', description: 'Good\'s description',
     minLength: 2, maximum: 255,
     type: 'string',
+    default: 'Adidas'
   })
   name: string;
 }

@@ -44,6 +44,8 @@ export class GoodController {
   @UseGuards(JwtAuthGuard)
   @Patch('/:id')
   @HttpCode(HttpStatus.OK)
+  @ApiSecurity('bearer')
+  @ApiQuery({ name: 'id', example: 1, description: 'Id of updating good' })
   public async updateDto(@Param('id')id: number, @Body()goodUpdate: GoodUpdateDto): Promise<Good> {
     return await this.goodService.update(id, goodUpdate);
   }
@@ -59,6 +61,8 @@ export class GoodController {
     allowEmptyValue: false,
   })
   @Get('/')
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: 200, description: 'Returns paginated response of goods' })
   public async getGoods(@Query('page')page = 1, @Query('perPage')perPage = 10): Promise<Array<Good>> {
     return await this.goodService.getGoods(page, perPage);
   }
