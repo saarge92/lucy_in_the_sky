@@ -1,15 +1,17 @@
-import { Crud } from '@nestjsx/crud';
-import { Good } from '../entity/good.entity';
 import { GoodService } from '../services/good.service';
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
+import { Good } from '../entity/good.entity';
 
-@Crud({
-  model: {
-    type: Good,
-  },
-})
+
 @Controller('goods')
 export class GoodController {
-  constructor(public readonly service: GoodService) {
+  constructor(public readonly goodService: GoodService) {
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/:id')
+  public async getGood(@Param('id')id: number): Promise<Good> {
+    return await this.goodService.getGoodById(id);
   }
 }

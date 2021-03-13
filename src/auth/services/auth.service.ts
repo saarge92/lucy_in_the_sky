@@ -1,12 +1,12 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
-import { USER_SERVICE } from '../constants/providers.constants';
-import { IUserService } from '../interfaces/user.service.interface';
-import { UserRegisterDto } from '../dto/user.register.dto';
-import { UserCreatedResponse } from '../responses/user_created.response';
+import { USER_SERVICE } from '../../user/constants/providers.constants';
+import { IUserService } from '../../user/interfaces/user.service.interface';
+import { UserRegisterDto } from '../../user/dto/user.register.dto';
+import { UserCreatedResponse } from '../../user/responses/user_created.response';
 import { JwtService } from '@nestjs/jwt';
 import { IAuthService } from '../interfaces/auth.service.interface';
-import { UserLoginDto } from '../dto/user.login.dto';
-import { UserAuthenticated } from '../responses/user_authenticated.response';
+import { UserLoginDto } from '../../user/dto/user.login.dto';
+import { UserAuthenticated } from '../../user/responses/user_authenticated.response';
 import { compare } from 'bcrypt';
 
 /**

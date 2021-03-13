@@ -1,29 +1,19 @@
 import { CACHE_MANAGER, CacheStore, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
-import { Repository } from 'typeorm';
 import { Good } from '../entity/good.entity';
-import { CrudRequest } from '@nestjsx/crud';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class GoodService extends TypeOrmCrudService<Good> {
-  constructor(@InjectRepository(Good) private readonly goodRepo: Repository<Good>,
-              @Inject(CACHE_MANAGER) private cacheManager: CacheStore) {
-    super(goodRepo);
+export class GoodService {
+  constructor(@InjectRepository(Good) private readonly goodRepository: Repository<Good>,
+              @Inject(CACHE_MANAGER) private readonly cacheManager: CacheStore) {
   }
 
-  public async getOne(req: CrudRequest): Promise<Good> {
-    const goodId = req.parsed.search.$and[1]['id']['$eq'];
-    const cacheGood: any = await this.cacheManager.get(`good-${goodId}`);
-    if (!cacheGood) {
-      const good = await this.goodRepo.findOne(goodId);
-      if (good) {
-        await this.cacheManager.set(`good-${goodId}`, JSON.stringify(good), { ttl: 60 });
-        return good;
-      }
-      return null;
+  public async getGoodById(id: number): Promise<Good> {
+    const goodStorageId = `good-${id}`;
+    const goodStorage = await this.cacheManager.get<string>(goodStorageId);
+    if (goodStorage) {
+      return JSON.parse(goodStorage) as Good;
     }
-    return JSON.parse(cacheGood) as Good;
   }
-
 }

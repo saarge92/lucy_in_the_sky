@@ -4,13 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { GoodModule } from './good/good.module';
 import { TypeOrmCoreModule } from '@nestjs/typeorm/dist/typeorm-core.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(),
     TypeOrmCoreModule.forRoot(),
-    UserModule, GoodModule],
+    UserModule, GoodModule, AuthModule],
   controllers: [],
   providers: [],
 })
