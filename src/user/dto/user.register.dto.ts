@@ -7,6 +7,7 @@ export class UserRegisterDto {
     title: 'Email', description: 'User\'s email',
     minLength: 2, maximum: 255,
     type: 'string',
+    example: "example@mail.ru"
   })
   email: string;
 
@@ -15,6 +16,7 @@ export class UserRegisterDto {
     title: 'Password', description: 'User\'s email',
     minLength: 2, maximum: 255,
     type: 'string',
+    example: '123456'
   })
   password: string;
 }
