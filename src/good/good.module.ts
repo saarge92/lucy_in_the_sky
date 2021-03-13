@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Good } from './entity/good.entity';
 import { GoodController } from './controllers/good.controller';
 import { GoodService } from './services/good.service';
+import { GoodProvider } from './providers/good.provider';
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import { GoodService } from './services/good.service';
     TypeOrmModule.forFeature([Good]),
   ],
   controllers: [GoodController],
-  providers: [GoodService],
+  providers: [...GoodProvider],
   exports: [],
 })
 export class GoodModule {

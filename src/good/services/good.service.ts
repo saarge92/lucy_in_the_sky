@@ -4,9 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GoodCreateDto } from '../dto/good.create.dto';
 import { GoodUpdateDto } from '../dto/good.update';
+import { IGoodService } from '../interfaces/good.service.interface';
 
 @Injectable()
-export class GoodService {
+export class GoodService implements IGoodService {
   constructor(@InjectRepository(Good) private readonly goodRepository: Repository<Good>,
               @Inject(CACHE_MANAGER) private readonly cacheManager: CacheStore) {
   }

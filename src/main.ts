@@ -13,6 +13,10 @@ async function bootstrap() {
     .setDescription('Simple API for users authorization & goods selection')
     .setVersion('1.0')
     .addTag('goods')
+    .addSecurity('bearer', {
+      type: 'http',
+      scheme: 'bearer',
+    })
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
