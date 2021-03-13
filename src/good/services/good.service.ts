@@ -17,6 +17,12 @@ export class GoodService {
     if (goodStorage) {
       return JSON.parse(goodStorage) as Good;
     }
+    const goodExist = await this.goodRepository.findOne(id);
+    if (goodExist) {
+      await this.cacheManager.set(goodStorageId, JSON.stringify(goodExist), { ttl: 60 });
+      return goodExist;
+    }
+    return null;
   }
 
   public async create(good: GoodCreateDto): Promise<Good> {
