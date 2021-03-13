@@ -7,6 +7,7 @@ export class UserLoginDto {
     title: 'Email of user', description: 'User\'s email',
     minLength: 2, maximum: 255,
     type: 'string',
+    example: 'example@mail.ru'
   })
   email: Readonly<string>;
 
@@ -15,6 +16,7 @@ export class UserLoginDto {
     title: 'Password of the user', description: 'User\'s password',
     minLength: 2, maximum: 255,
     type: 'string',
+    example: "123456"
   })
   password: Readonly<string>;
 }
