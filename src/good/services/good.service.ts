@@ -5,14 +5,21 @@ import { Repository } from 'typeorm';
 import { GoodCreateDto } from '../dto/good.create.dto';
 import { GoodUpdateDto } from '../dto/good.update';
 import { IGoodService } from '../interfaces/good.service.interface';
+import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
+import { CrudRequest } from '@nestjsx/crud';
 
 @Injectable()
-export class GoodService implements IGoodService {
+export class GoodService extends TypeOrmCrudService<Good> {
   constructor(@InjectRepository(Good) private readonly goodRepository: Repository<Good>,
               @Inject(CACHE_MANAGER) private readonly cacheManager: CacheStore) {
+    super(goodRepository);
   }
 
-  public async getGoodById(id: number): Promise<Good> {
+  async getOne(req: CrudRequest): Promise<Good> {
+    const searchIdElement = req.parsed.search.$and.find(element =>
+      element != undefined && Object.keys(element).findIndex(key => key === 'id') != -1);
+    const id = searchIdElement['id']['$eq'];
+
     const goodStorageId = `good-${id}`;
     const goodStorage = await this.cacheManager.get<string>(goodStorageId);
     if (goodStorage) {
@@ -24,32 +31,5 @@ export class GoodService implements IGoodService {
       return goodExist;
     }
     return null;
-  }
-
-  public async create(good: GoodCreateDto): Promise<Good> {
-    return await this.initAndCreateGood(good);
-  }
-
-  public async update(id: number, good: GoodUpdateDto): Promise<Good> {
-    const existGood = await this.goodRepository.findOne(id);
-    if (!existGood)
-      throw new ConflictException('Такого товара нет');
-
-    existGood.name = good.name;
-    await this.goodRepository.save(existGood);
-    return existGood;
-  }
-
-  public async getGoods(page = 1, perPage = 10): Promise<Array<Good>> {
-    if (perPage > 30)
-      perPage = 30;
-    return await this.goodRepository.find({ take: perPage, skip: (page - 1) * perPage });
-  }
-
-  private async initAndCreateGood(goodDto: GoodCreateDto): Promise<Good> {
-    const newGood = new Good();
-    newGood.name = goodDto.name;
-    await this.goodRepository.save(newGood);
-    return newGood;
   }
 }
