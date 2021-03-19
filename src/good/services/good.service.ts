@@ -2,9 +2,6 @@ import { CACHE_MANAGER, CacheStore, ConflictException, Inject, Injectable } from
 import { Good } from '../entity/good.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { GoodCreateDto } from '../dto/good.create.dto';
-import { GoodUpdateDto } from '../dto/good.update';
-import { IGoodService } from '../interfaces/good.service.interface';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { CrudRequest } from '@nestjsx/crud';
 
