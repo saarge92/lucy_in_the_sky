@@ -1,6 +1,13 @@
 # Description
 This is simple project for user authentication and goods management
 
+# Docker deployment
+If you want to up project on the docker you need to run next
+
+```
+docker-compose up
+```
+
 ## How to run
 Firstly, you need create .env in the root of the project
 and copy all parameters from .env.example to .env file.  
