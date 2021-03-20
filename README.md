@@ -1,5 +1,7 @@
 # Description
 This is simple project for user authentication and goods management
+This project allows registering as user & add all goods information
+Includes basic jwt authentication & CRUD operations
 
 # Docker deployment
 If you want to up project on the docker you need to run next
