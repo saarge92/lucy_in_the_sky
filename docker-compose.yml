@@ -12,7 +12,6 @@ services:
     build:
       context: .
       dockerfile: docker/server/.Dockerfile
-    command: npm run start:prod
     volumes:
     - .:/usr/src/app
     - /usr/src/app/node_modules
