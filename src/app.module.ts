@@ -6,6 +6,8 @@ import { GoodModule } from './good/good.module';
 import { TypeOrmCoreModule } from '@nestjs/typeorm/dist/typeorm-core.module';
 import { AuthModule } from './auth/auth.module';
 import { BullModule } from '@nestjs/bull';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
   imports: [
@@ -19,6 +21,30 @@ import { BullModule } from '@nestjs/bull';
         redis: {
           host: configService.get<string>('REDIS_HOST'),
           port: configService.get<number>('REDIS_PORT'),
+        },
+      }),
+    }),
+    MailerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        pool: true,
+        host: 'smtp.gmail.com',
+        port: configService.get('MAIL_PORT'),
+        secure: true,
+        auth: {
+          user: configService.get('MAIL_FROM'),
+          pass: configService.get('MAIL_PASSWORD'),
+        },
+        defaults: {
+          from: '"nest-modules" <modules@nestjs.com>',
+        },
+        template: {
+          dir: __dirname + '/public/templates',
+          adapter: new HandlebarsAdapter(),
+          options: {
+            strict: true,
+          },
         },
       }),
     }),

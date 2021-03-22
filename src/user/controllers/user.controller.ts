@@ -1,9 +1,9 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
-import { UserRegisterDto } from './dto/user.register.dto';
-import { UserCreatedResponse } from './responses/user_created.response';
-import { AUTH_SERVICE } from './constants/providers.constants';
-import { IAuthService } from '../auth/interfaces/auth.service.interface';
-import { UserLoginDto } from './dto/user.login.dto';
+import { UserRegisterDto } from '../dto/user.register.dto';
+import { UserCreatedResponse } from '../responses/user_created.response';
+import { AUTH_SERVICE } from '../constants/providers.constants';
+import { IAuthService } from '../../auth/interfaces/auth.service.interface';
+import { UserLoginDto } from '../dto/user.login.dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('users')

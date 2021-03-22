@@ -8,6 +8,9 @@ import { IAuthService } from '../interfaces/auth.service.interface';
 import { UserLoginDto } from '../../user/dto/user.login.dto';
 import { UserAuthenticated } from '../../user/responses/user_authenticated.response';
 import { compare } from 'bcrypt';
+import { InjectQueue } from '@nestjs/bull';
+import { USER_REGISTERED } from '../constants/email.auth';
+import { Queue } from 'bull';
 
 /**
  * @author Serdar Durdyev
@@ -15,13 +18,16 @@ import { compare } from 'bcrypt';
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(@Inject(USER_SERVICE) private readonly userService: IUserService,
-              private readonly jwtService: JwtService) {
+              private readonly jwtService: JwtService,
+              @InjectQueue(USER_REGISTERED) private readonly userRegisterQueue: Queue) {
   }
 
   public async registerUser(userRegisterDto: UserRegisterDto): Promise<UserCreatedResponse> {
     const createdUser = await this.userService.createUser(userRegisterDto);
     const token = await this.jwtService.sign({ user: createdUser.email });
-
+    await this.userRegisterQueue.add({
+      email: createdUser.email,
+    });
     return {
       token,
       user: createdUser.email,
