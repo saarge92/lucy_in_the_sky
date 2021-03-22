@@ -13,20 +13,22 @@ services:
       context: .
       dockerfile: docker/server/.Dockerfile
     volumes:
-    - .:/usr/src/app
-    - /usr/src/app/node_modules
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
     env_file:
       - .env
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
+      - "${WEBSOCKET_PORT}:${WEBSOCKET_PORT}"
     depends_on:
       - db
+      - redis
 
   db:
     image: library/mysql:5.7.33
     command: --default-authentication-plugin=mysql_native_password
     volumes:
-    - ./volumes/mysql:/var/lib/mysql
+      - ./volumes/mysql:/var/lib/mysql
     networks:
       - app-tier
     environment:
@@ -37,6 +39,14 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3310:3306"
+
+  redis:
+    image: library/redis:6.2-alpine
+    ports:
+      - 6380:6379
+    networks:
+      - app-tier
+
 
 
 

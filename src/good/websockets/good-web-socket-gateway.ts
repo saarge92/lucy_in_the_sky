@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 import { Good } from '../entity/good.entity';
 import { AuthWebsocketService } from '../../auth/services/auth-websocket.service';
 
-@WebSocketGateway(8001, { namespace: '/goods' })
+@WebSocketGateway(Number(process.env.WEBSOCKET_PORT), { namespace: '/goods' })
 export class GoodWebSocketGateway implements OnGatewayConnection {
   constructor(private readonly authWebsocket: AuthWebsocketService) {
   }
