@@ -24,7 +24,7 @@ export class AuthService implements IAuthService {
 
   public async registerUser(userRegisterDto: UserRegisterDto): Promise<UserCreatedResponse> {
     const createdUser = await this.userService.createUser(userRegisterDto);
-    const token = await this.jwtService.sign({ user: createdUser.email });
+    const token = await this.jwtService.signAsync({ user: createdUser.email });
     await this.userRegisterQueue.add({
       email: createdUser.email,
     });

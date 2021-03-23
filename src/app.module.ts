@@ -28,13 +28,14 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        pool: true,
-        host: 'smtp.gmail.com',
-        port: configService.get('MAIL_PORT'),
-        secure: true,
-        auth: {
-          user: configService.get('MAIL_FROM'),
-          pass: configService.get('MAIL_PASSWORD'),
+        transport: {
+          host: 'smtp.gmail.com',
+          port: configService.get('MAIL_PORT'),
+          secure: true,
+          auth: {
+            user: configService.get<string>("MAIL_FROM"),
+            pass: configService.get<string>("MAIL_PASSWORD")
+          }
         },
         defaults: {
           from: '"nest-modules" <modules@nestjs.com>',

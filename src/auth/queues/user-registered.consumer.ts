@@ -12,12 +12,12 @@ export class UserRegisteredConsumer {
   private readonly logger: Logger = new Logger(UserRegisteredConsumer.name);
 
   constructor(private readonly mailService: MailerService,
-              private readonly configService: ConfigService) {
+    private readonly configService: ConfigService) {
   }
 
   @Process()
   async sendEmailMessage(job: Job): Promise<any> {
-    const email = job.data;
+    const email = job.data.email;
     await this.mailService.sendMail({
       to: email,
       from: this.configService.get('MAIL_FROM'),

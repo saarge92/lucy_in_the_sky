@@ -3,9 +3,12 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { RedisIoAdapter } from './common/adapters/redis-io-adapter';
+import {Promise} from "bluebird"
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+   // @ts-ignore
+  global.Promise = Promise;
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
 
