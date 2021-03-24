@@ -1,5 +1,5 @@
 import { EntityDate } from 'src/common/entity.date';
-import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from './role.entity';
 
 @Entity({ name: 'users' })
@@ -13,7 +13,7 @@ export class User extends EntityDate {
   @Column({ name: 'password', nullable: false })
   public password: string;
 
-  @OneToMany(() => Role, role => role.users, { lazy: true })
+  @ManyToMany(() => Role, { lazy: true })
   @JoinTable({
     name: 'user_in_roles',
     joinColumn: {
@@ -25,6 +25,6 @@ export class User extends EntityDate {
       referencedColumnName: 'id',
     },
   })
-  roles: Array<Role>;
+  roles: Promise<Array<Role>>;
 
 }

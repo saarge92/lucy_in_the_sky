@@ -1,12 +1,16 @@
-import { Column, Entity, ManyToOne, JoinColumn, Index, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, JoinColumn, Index, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user.entity';
 import { Role } from './role.entity';
+import { EntityDate } from '../../common/entity.date';
 
 @Entity({ name: ' user_in_roles' })
-export class UserInRoleEntity {
+@Index(['roleId', 'userId'], { unique: true })
+export class UserInRoleEntity extends EntityDate {
+
+  @PrimaryGeneratedColumn({ type: 'int' })
+  id: number;
 
   @Column({ name: 'user_id', nullable: true, type: 'int' })
-  @PrimaryColumn()
   userId: number;
 
   @ManyToOne(() => User, { onDelete: 'SET NULL', onUpdate: 'CASCADE' })
@@ -14,7 +18,6 @@ export class UserInRoleEntity {
   user: User | null;
 
   @Column({ name: 'role_id', nullable: true, type: 'int' })
-  @PrimaryColumn()
   roleId: number;
 
   @ManyToOne(() => Role, { onDelete: 'SET NULL', onUpdate: 'CASCADE' })

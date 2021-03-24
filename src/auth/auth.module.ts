@@ -13,12 +13,13 @@ import { MailerModule, MailerService } from '@nestjs-modules/mailer';
 import { UserRegisteredConsumer } from './queues/user-registered.consumer';
 import { BullModule } from '@nestjs/bull';
 import { USER_REGISTERED } from './constants/email.auth';
+import { Role } from '../user/entity/role.entity';
 
 @Module({
   imports: [
     forwardRef(() => UserModule),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Role]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

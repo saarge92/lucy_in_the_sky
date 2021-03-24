@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, JoinTable } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, JoinTable, ManyToMany } from 'typeorm';
 import { User } from './user.entity';
 import { EntityDate } from '../../common/entity.date';
 
@@ -7,10 +7,10 @@ export class Role extends EntityDate {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
-  @Column({ type: 'varchar', scale: 255, nullable: false, name: "name" })
+  @Column({ type: 'varchar', scale: 255, nullable: false, name: 'name' })
   name: string;
 
-  @OneToMany(() => User, user => user.roles, { lazy: true })
+  @ManyToMany(() => User, { lazy: true })
   @JoinTable({
     name: 'user_in_roles',
     joinColumn: {
@@ -22,6 +22,6 @@ export class Role extends EntityDate {
       referencedColumnName: 'id',
     },
   })
-  users?: Array<User>;
+  users: Promise<Array<Role>>;
 
 }

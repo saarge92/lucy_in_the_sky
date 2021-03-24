@@ -11,6 +11,10 @@ import { compare } from 'bcrypt';
 import { InjectQueue } from '@nestjs/bull';
 import { USER_REGISTERED } from '../constants/email.auth';
 import { Queue } from 'bull';
+import { Connection, Repository } from 'typeorm';
+import { Role } from '../../user/entity/role.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../../user/entity/user.entity';
 
 /**
  * @author Serdar Durdyev
@@ -18,23 +22,45 @@ import { Queue } from 'bull';
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(@Inject(USER_SERVICE) private readonly userService: IUserService,
-              private readonly jwtService: JwtService,
-              @InjectQueue(USER_REGISTERED) private readonly userRegisterQueue: Queue) {
+    private readonly jwtService: JwtService,
+    private readonly connection: Connection,
+    @InjectRepository(Role) private readonly roleRepository: Repository<Role>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectQueue(USER_REGISTERED) private readonly userRegisterQueue: Queue) {
   }
 
   public async registerUser(userRegisterDto: UserRegisterDto): Promise<UserCreatedResponse> {
-    const createdUser = await this.userService.createUser(userRegisterDto);
-    const token = await this.jwtService.signAsync({ user: createdUser.email });
-    await this.userRegisterQueue.add({
-      email: createdUser.email,
-    });
-    return {
-      token,
-      user: createdUser.email,
-    };
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.startTransaction();
+
+    try {
+      const createdUser = await this.userService.createUser(userRegisterDto, queryRunner);
+      const userRole = await this.roleRepository.findOne({ where: { name: 'User' } });
+      (await createdUser.roles).push(userRole)
+      await queryRunner.manager.save(createdUser);
+      await queryRunner.commitTransaction();
+
+      const token = await this.jwtService.signAsync({ user: createdUser.email });
+
+      await this.userRegisterQueue.add({
+        email: createdUser.email,
+      });
+
+      return {
+        token,
+        user: createdUser.email,
+      };
+
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new ConflictException(error.message);
+    } finally {
+      await queryRunner.manager.release();
+    }
   }
 
   public async loginUser(userLoginDto: UserLoginDto): Promise<UserAuthenticated> {
+
     const existedUser = await this.userService.checkUserByEmail(userLoginDto.email);
     if (!existedUser)
       throw new ConflictException('Неверный логин или пароль');
@@ -43,10 +69,13 @@ export class AuthService implements IAuthService {
     if (!isMatch)
       throw new ConflictException('Неверный логин или пароль');
 
+    const roles = (await existedUser.roles).map(role => role.name);
+
     const token = await this.jwtService.signAsync({ user: existedUser.email });
     return {
       token,
       user: existedUser.email,
+      roles
     };
   }
 }
