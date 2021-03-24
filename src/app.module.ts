@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { GoodModule } from './good/good.module';
 import { TypeOrmCoreModule } from '@nestjs/typeorm/dist/typeorm-core.module';
@@ -12,7 +11,6 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot(),
     TypeOrmCoreModule.forRoot(),
     BullModule.forRootAsync({
       inject: [ConfigService],
@@ -29,13 +27,13 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         transport: {
-          host: configService.get<string>("MAIL_HOST"),
+          host: configService.get<string>('MAIL_HOST'),
           port: configService.get('MAIL_PORT'),
           secure: true,
           auth: {
-            user: configService.get<string>("MAIL_FROM"),
-            pass: configService.get<string>("MAIL_PASSWORD")
-          }
+            user: configService.get<string>('MAIL_FROM'),
+            pass: configService.get<string>('MAIL_PASSWORD'),
+          },
         },
         defaults: {
           from: '"nest-modules" <modules@nestjs.com>',

@@ -6,7 +6,6 @@ import { GoodService } from './services/good.service';
 import { GoodProvider } from './providers/good.provider';
 import { GoodWebSocketGateway } from './websockets/good-web-socket-gateway';
 import { AuthModule } from '../auth/auth.module';
-import { UserService } from '../user/services/user.service';
 
 @Module({
   imports: [
