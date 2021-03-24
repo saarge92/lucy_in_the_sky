@@ -5,7 +5,7 @@ npm install
 
 npm run build
 
-npx typeorm migration:run
+npm run db:sync
 
 if [ "${NODE_ENV}" == "development" ]
 then npm run start:dev;
