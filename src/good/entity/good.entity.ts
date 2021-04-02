@@ -6,6 +6,6 @@ export class Good extends EntityDate {
   @PrimaryGeneratedColumn({ type: 'int' })
   public id: number;
 
-  @Column({ name: 'name', nullable: false, unique: false })
+  @Column({ nullable: false, type: 'varchar' })
   public name: string;
 }

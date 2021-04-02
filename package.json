@@ -11,7 +11,7 @@
     "db:revert": "npm run typeorm migration:revert",
     "db:sync": "npm run typeorm schema:sync",
     "db:migrate": "npm run typeorm migration:run",
-    "db:seed" : "CLI_PATH=./dist/cli.js npx nestjs-command  seed-roles",
+    "db:seed": "CLI_PATH=./dist/cli.js npx nestjs-command  seed-roles",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

@@ -9,11 +9,15 @@ import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { GoodService } from '../services/good.service';
 import { GoodWebSocketGateway } from '../websockets/good-web-socket-gateway';
 import { GoodCreateDto } from '../dto/good.create.dto';
+import { GoodUpdateDto } from '../dto/good.update';
 
 @ApiTags('goods')
 @Crud({
   model: {
     type: Good,
+  },
+  dto: {
+    update: GoodUpdateDto,
   },
 })
 @Controller('goods')

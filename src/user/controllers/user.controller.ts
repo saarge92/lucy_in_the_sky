@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Inject, Post } from '@nestjs/common';
 import { UserRegisterDto } from '../dto/user.register.dto';
 import { UserCreatedResponse } from '../responses/user_created.response';
 import { AUTH_SERVICE } from '../constants/providers.constants';
@@ -19,6 +19,7 @@ export class UserController {
   }
 
   @Post('/login')
+  @HttpCode(HttpStatus.OK)
   public async loginUser(@Body()userLoginDto: UserLoginDto): Promise<any> {
     return await this.authService.loginUser(userLoginDto);
   }
