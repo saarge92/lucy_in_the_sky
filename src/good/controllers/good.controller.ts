@@ -1,6 +1,6 @@
 import {
   Controller,
-  Inject, UseGuards,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController, CrudRequest, Override, ParsedBody, ParsedRequest } from '@nestjsx/crud';
@@ -28,9 +28,17 @@ export class GoodController implements CrudController<Good> {
 
   @Override('createOneBase')
   @UseGuards(JwtAuthGuard)
-  public async createOne(@ParsedRequest()req: CrudRequest, @ParsedBody() dto: GoodCreateDto): Promise<Good> {
-    const createdGood = await this.service.createOne(req, dto);
+  public async createOne(@ParsedRequest()request: CrudRequest, @ParsedBody() dto: GoodCreateDto): Promise<Good> {
+    const createdGood = await this.service.createOne(request, dto);
     await this.goodWebSocketGateWay.goodCreated(createdGood);
     return createdGood;
+  }
+
+  @Override('updateOneBase')
+  @UseGuards(JwtAuthGuard)
+  public async updateOne(@ParsedRequest() request: CrudRequest, @ParsedBody() dto: GoodUpdateDto): Promise<Good> {
+    const updatedGood = await this.service.updateOne(request, dto);
+    await this.goodWebSocketGateWay.goodUpdated(updatedGood);
+    return updatedGood;
   }
 }

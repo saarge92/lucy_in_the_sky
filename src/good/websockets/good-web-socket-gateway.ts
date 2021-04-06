@@ -17,4 +17,8 @@ export class GoodWebSocketGateway implements OnGatewayConnection {
   public async goodCreated(good: Good): Promise<void> {
     await this.webSocketServer.emit('good-created', good);
   }
+
+  public async goodUpdated(good: Good): Promise<void> {
+    await this.webSocketServer.emit('good-updated', good);
+  }
 }
