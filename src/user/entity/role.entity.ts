@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, JoinTable, ManyToMany } from 'typeorm';
 import { User } from './user.entity';
 import { EntityDate } from '../../common/entity.date';
 

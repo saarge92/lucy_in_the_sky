@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { BullModule } from '@nestjs/bull';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -47,7 +48,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         },
       }),
     }),
-    UserModule, GoodModule, AuthModule],
+    UserModule, GoodModule, AuthModule, RolesModule],
   controllers: [],
   providers: [],
 })
