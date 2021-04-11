@@ -1,7 +1,7 @@
 import { Process, Processor } from '@nestjs/bull';
 import { USER_REGISTERED } from '../constants/email.auth';
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable, Logger, Scope } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
 import { ConfigService } from '@nestjs/config';
 
@@ -12,7 +12,7 @@ export class UserRegisteredConsumer {
   private readonly logger: Logger = new Logger(UserRegisteredConsumer.name);
 
   constructor(private readonly mailService: MailerService,
-    private readonly configService: ConfigService) {
+              private readonly configService: ConfigService) {
   }
 
   @Process()

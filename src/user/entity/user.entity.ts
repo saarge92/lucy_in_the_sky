@@ -1,6 +1,6 @@
-import { EntityDate } from 'src/common/entity.date';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from './role.entity';
+import { EntityDate } from '../../common/entity.date';
 
 @Entity({ name: 'users' })
 export class User extends EntityDate {
