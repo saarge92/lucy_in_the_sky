@@ -4,9 +4,10 @@ import { Observable, of } from 'rxjs';
 import { Repository } from 'typeorm';
 import { CreateRoleDto } from '../dto/create-role.dto';
 import { Role } from '../../user/entity/role.entity';
+import { IRoleService } from '../interfaces/role-service-interface';
 
 @Injectable()
-export class RoleService {
+export class RoleService implements IRoleService {
   constructor(@InjectRepository(Role) private readonly roleRepository: Repository<Role>) {
   }
 

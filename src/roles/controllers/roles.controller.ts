@@ -1,18 +1,31 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Role } from 'src/user/entity/role.entity';
 import { CreateRoleDto } from '../dto/create-role.dto';
-import { RoleService } from '../services/role.service';
 import { Roles, RolesMode } from '../../auth/decorators/role-decorator';
 import { RoleEnum } from '../../auth/enums/RoleEnum';
 import { RolesGuard } from '../../auth/guards/roles-guard';
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { Response } from 'express';
+import { IRoleService } from '../interfaces/role-service-interface';
+import { ROLE_SERVICE } from '../constants/roles-constants';
 
 @Controller('roles')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class RolesController {
-  constructor(private readonly roleService: RoleService) {
+  constructor(@Inject(ROLE_SERVICE) private readonly roleService: IRoleService) {
   }
 
   @Post('/')
