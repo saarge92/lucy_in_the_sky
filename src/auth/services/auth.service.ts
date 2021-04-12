@@ -13,6 +13,7 @@ import { USER_REGISTERED } from '../constants/email.auth';
 import { Queue } from 'bull';
 import { Connection } from 'typeorm';
 import { Role } from '../../user/entity/role.entity';
+import { UserInRoleEntity } from '../../user/entity/user-in-role.entity';
 
 /**
  * @author Serdar Durdyev
@@ -32,8 +33,7 @@ export class AuthService implements IAuthService {
     try {
       const createdUser = await this.userService.createUser(userRegisterDto, queryRunner);
       const userRole = await queryRunner.manager.findOne(Role, { where: { name: 'User' } });
-      (await createdUser.roles).push(userRole);
-      await queryRunner.manager.save(createdUser);
+      await queryRunner.manager.save(UserInRoleEntity, { userId: createdUser.id, roleId: userRole.id });
       await queryRunner.commitTransaction();
 
       const token = await this.jwtService.signAsync({ user: createdUser.email });
