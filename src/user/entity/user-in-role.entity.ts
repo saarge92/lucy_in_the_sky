@@ -4,7 +4,7 @@ import { EntityDate } from '../../common/entity.date';
 @Entity({ name: 'user_in_roles', engine: 'InnoDB' })
 export class UserInRoleEntity extends EntityDate {
 
-  @PrimaryColumn({ type: 'int', unsigned: true, primary: true, generated: true })
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ name: 'user_id', nullable: true, type: 'int' })

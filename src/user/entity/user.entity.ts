@@ -13,7 +13,7 @@ export class User extends EntityDate {
   @Column({ name: 'password', nullable: false })
   public password: string;
 
-  @ManyToMany(type => Role, { lazy: true })
+  @ManyToMany(() => Role, { lazy: true })
   @JoinTable({
     name: 'user_in_roles',
     joinColumn: {

@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, JoinTable, ManyToMany } from 't
 import { User } from './user.entity';
 import { EntityDate } from '../../common/entity.date';
 
-@Entity({ name: 'roles', engine: 'InnoDB' })
+@Entity({ name: 'roles' })
 export class Role extends EntityDate {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
@@ -10,6 +10,7 @@ export class Role extends EntityDate {
   @Column({ type: 'varchar', scale: 255, nullable: false, name: 'name' })
   name: string;
 
+  @ManyToMany(() => User, { lazy: true })
   @JoinTable({
     name: 'user_in_roles',
     joinColumn: {
@@ -21,6 +22,6 @@ export class Role extends EntityDate {
       referencedColumnName: 'id',
     },
   })
-  users: Promise<Array<Role>>;
+  users: Promise<Array<User>>;
 
 }
