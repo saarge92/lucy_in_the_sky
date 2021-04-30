@@ -1,0 +1,44 @@
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { Socket } from 'socket.io';
+import { WsException } from '@nestjs/websockets';
+import { USER_SERVICE } from '../../user/constants/providers.constants';
+import { IUserService } from '../../user/interfaces/user.service.interface';
+import { Role } from '../../user/entity/role.entity';
+
+@Injectable()
+export class AdminWebsocketService {
+  private readonly logger = new Logger(AdminWebsocketService.name);
+  private readonly availableRoles = new Array('Admin');
+
+  constructor(private readonly jwtService: JwtService, private readonly configService: ConfigService,
+              @Inject(USER_SERVICE) private readonly userService: IUserService) {
+  }
+
+  public async checkPermissions(socket: Socket): Promise<void> {
+    try {
+      const token = socket.handshake.query.token;
+      if (!token) {
+        throw new Error('Запретная зона! Доступна только для администраторов');
+      }
+      const secret = this.configService.get<string>('JWT_SECRET');
+      const payload = await this.jwtService.verifyAsync(token, { secret });
+      if (!payload.user) {
+        throw new Error('Запретная зона! Доступна только для администраторов');
+      }
+      const user = await this.userService.checkUserByEmail(payload.user);
+      if (!user) {
+        this.logger.error('Попытка неавторизованного доступа');
+        throw new Error('Запретная зона! Такой пользователь не найден');
+      }
+      const userRoles = await user.roles;
+      const userHasRole = userRoles.findIndex((role: Role) => this.availableRoles.includes(role.name));
+      if (userHasRole <= -1) {
+        throw new Error('Запретная зона! Такой пользователь не найден');
+      }
+    } catch (error) {
+      throw new WsException(error);
+    }
+  }
+}

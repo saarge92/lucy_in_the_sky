@@ -14,6 +14,7 @@ import { Queue } from 'bull';
 import { Connection } from 'typeorm';
 import { Role } from '../../user/entity/role.entity';
 import { UserInRoleEntity } from '../../user/entity/user-in-role.entity';
+import { UserRegisteredGateway } from '../gateways/user-registered-gateway';
 
 /**
  * @author Serdar Durdyev
@@ -23,7 +24,8 @@ export class AuthService implements IAuthService {
   constructor(@Inject(USER_SERVICE) private readonly userService: IUserService,
               private readonly jwtService: JwtService,
               private readonly connection: Connection,
-              @InjectQueue(USER_REGISTERED) private readonly userRegisterQueue: Queue) {
+              @InjectQueue(USER_REGISTERED) private readonly userRegisterQueue: Queue,
+              private readonly userRegisteredGateway: UserRegisteredGateway) {
   }
 
   public async registerUser(userRegisterDto: UserRegisterDto): Promise<UserCreatedResponse> {
@@ -41,6 +43,8 @@ export class AuthService implements IAuthService {
       await this.userRegisterQueue.add({
         email: createdUser.email,
       });
+
+      await this.userRegisteredGateway.userHasRegistered([createdUser.email, createdUser.id.toString()]);
 
       return {
         token,
