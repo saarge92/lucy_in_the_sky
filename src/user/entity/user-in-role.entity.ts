@@ -1,4 +1,4 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 import { EntityDate } from '../../common/entity.date';
 
 @Entity({ name: 'user_in_roles', engine: 'InnoDB' })
