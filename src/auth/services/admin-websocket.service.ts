@@ -20,25 +20,25 @@ export class AdminWebsocketService {
     try {
       const token = socket.handshake.query.token;
       if (!token) {
-        throw new Error('Запретная зона! Доступна только для администраторов');
+        throw new WsException('Токен отсутсвует');
       }
       const secret = this.configService.get<string>('JWT_SECRET');
       const payload = await this.jwtService.verifyAsync(token, { secret });
       if (!payload.user) {
-        throw new Error('Запретная зона! Доступна только для администраторов');
+        throw new WsException('Токен отсутсвует');
       }
       const user = await this.userService.checkUserByEmail(payload.user);
       if (!user) {
         this.logger.error('Попытка неавторизованного доступа');
-        throw new Error('Запретная зона! Такой пользователь не найден');
+        throw new WsException('Токен отсутсвует');
       }
       const userRoles = await user.roles;
       const userHasRole = userRoles.findIndex((role: Role) => this.availableRoles.includes(role.name));
       if (userHasRole <= -1) {
-        throw new Error('Запретная зона! Такой пользователь не найден');
+        throw new WsException('Токен отсутсвует');
       }
     } catch (error) {
-      throw new WsException(error);
+      socket.disconnect();
     }
   }
 }

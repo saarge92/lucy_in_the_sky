@@ -1,6 +1,13 @@
-import { OnGatewayConnection, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  BaseWsExceptionFilter,
+  OnGatewayConnection,
+  WebSocketGateway,
+  WebSocketServer,
+  WsException,
+} from '@nestjs/websockets';
 import { AdminWebsocketService } from '../services/admin-websocket.service';
 import { Socket } from 'socket.io';
+import { UseFilters } from '@nestjs/common';
 
 @WebSocketGateway(Number(process.env.WEBSOCKET_PORT), { namespace: '/admin' })
 export class UserRegisteredGateway implements OnGatewayConnection {
@@ -9,6 +16,7 @@ export class UserRegisteredGateway implements OnGatewayConnection {
   constructor(private readonly adminGatewayService: AdminWebsocketService) {
   }
 
+  @UseFilters(new BaseWsExceptionFilter())
   public async handleConnection(client: Socket, ...args: any[]): Promise<any> {
     await this.adminGatewayService.checkPermissions(client);
   }

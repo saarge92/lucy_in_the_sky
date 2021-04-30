@@ -14,6 +14,8 @@ import { UserRegisteredConsumer } from './queues/user-registered.consumer';
 import { BullModule } from '@nestjs/bull';
 import { USER_REGISTERED } from './constants/email.auth';
 import { Role } from '../user/entity/role.entity';
+import { AdminWebsocketService } from './services/admin-websocket.service';
+import { UserRegisteredGateway } from './gateways/user-registered-gateway';
 
 @Module({
   imports: [
@@ -37,8 +39,8 @@ import { Role } from '../user/entity/role.entity';
     }),
   ],
   providers: [...AuthProvider, JwtStrategy, ConfigService, JwtAuthGuard, AuthWebsocketService,
-    UserRegisteredConsumer],
-  exports: [...AuthProvider, JwtModule, AuthWebsocketService],
+    UserRegisteredConsumer, UserRegisteredGateway, AdminWebsocketService],
+  exports: [...AuthProvider, JwtModule, AuthWebsocketService, AdminWebsocketService],
 })
 export class AuthModule {
 }
