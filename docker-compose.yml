@@ -20,6 +20,7 @@ services:
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
       - "${WEBSOCKET_PORT}:${WEBSOCKET_PORT}"
+      - "3002:9229"
     depends_on:
       - db
       - redis

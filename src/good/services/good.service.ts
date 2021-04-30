@@ -1,4 +1,4 @@
-import { CACHE_MANAGER, CacheStore, ConflictException, Inject, Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, CacheStore, Inject, Injectable } from '@nestjs/common';
 import { Good } from '../entity/good.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

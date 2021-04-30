@@ -28,7 +28,7 @@ export class GoodController implements CrudController<Good> {
 
   @Override('createOneBase')
   @UseGuards(JwtAuthGuard)
-  public async createOne(@ParsedRequest()request: CrudRequest, @ParsedBody() dto: GoodCreateDto): Promise<Good> {
+  public async createOne(@ParsedRequest() request: CrudRequest, @ParsedBody() dto: GoodCreateDto): Promise<Good> {
     const createdGood = await this.service.createOne(request, dto);
     await this.goodWebSocketGateWay.goodCreated(createdGood);
     return createdGood;

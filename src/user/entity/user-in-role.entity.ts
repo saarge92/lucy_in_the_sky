@@ -1,15 +1,12 @@
-import { Column, Entity, ManyToOne, JoinColumn, Index, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import { EntityDate } from '../../common/entity.date';
 
 @Entity({ name: 'user_in_roles', engine: 'InnoDB' })
+@Index(['userId', 'roleId'], { unique: true })
 export class UserInRoleEntity extends EntityDate {
-
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column({ name: 'user_id', nullable: true, type: 'int' })
+  @Column({ name: 'user_id', type: 'int', primary: true })
   userId: number;
 
-  @Column({ name: 'role_id', nullable: true, type: 'int' })
+  @Column({ name: 'role_id', type: 'int', primary: true })
   roleId: number;
 }
