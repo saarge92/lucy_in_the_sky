@@ -4,7 +4,7 @@ import { IUserService } from '../../user/interfaces/user.service.interface';
 import { UserRegisterDto } from '../../user/dto/user.register.dto';
 import { UserCreatedResponse } from '../../user/responses/user_created.response';
 import { JwtService } from '@nestjs/jwt';
-import { IAuthService } from '../interfaces/auth.service.interface';
+import { IAuthService } from '../contracts/auth.service.interface';
 import { UserLoginDto } from '../../user/dto/user.login.dto';
 import { UserAuthenticated } from '../../user/responses/user_authenticated.response';
 import { compare } from 'bcrypt';
@@ -15,6 +15,10 @@ import { Connection } from 'typeorm';
 import { Role } from '../../user/entity/role.entity';
 import { UserInRoleEntity } from '../../user/entity/user-in-role.entity';
 import { UserRegisteredGateway } from '../gateways/user-registered-gateway';
+import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
+import { UserExchange } from '../jobs/constants/exchanges';
+import { UserRegisteredRouting } from '../jobs/constants/routing-keys';
+import { UserRegisteredJobDto } from '../dto/jobs/user-registered-job-dto';
 
 /**
  * @author Serdar Durdyev
@@ -25,7 +29,8 @@ export class AuthService implements IAuthService {
               private readonly jwtService: JwtService,
               private readonly connection: Connection,
               @InjectQueue(USER_REGISTERED) private readonly userRegisterQueue: Queue,
-              private readonly userRegisteredGateway: UserRegisteredGateway) {
+              private readonly userRegisteredGateway: UserRegisteredGateway,
+              private readonly amqpConnection: AmqpConnection) {
   }
 
   public async registerUser(userRegisterDto: UserRegisterDto): Promise<UserCreatedResponse> {
@@ -45,6 +50,15 @@ export class AuthService implements IAuthService {
       });
 
       await this.userRegisteredGateway.userHasRegistered([createdUser.email, createdUser.id.toString()]);
+      const userRegisteredDto: UserRegisteredJobDto = {
+        email: createdUser.email,
+      };
+
+      await this.amqpConnection.publish(
+        UserExchange,
+        UserRegisteredRouting,
+        userRegisteredDto,
+      );
 
       return {
         token,

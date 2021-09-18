@@ -28,6 +28,7 @@ services:
 
   db:
     image: library/mysql:5.7.33
+    container_name: "lucy-db"
     command: --default-authentication-plugin=mysql_native_password
     networks:
       - app-tier
@@ -41,11 +42,16 @@ services:
       - "3310:3306"
 
   redis:
+    container_name: "lucy_redis"
     image: library/redis:6.2-alpine
     ports:
-      - 6380:6379
+      - "6380:6379"
     networks:
       - app-tier
+
+  rabbitmq:
+    container_name: "lucy-rabbit"
+    image: rabb
 
 
 

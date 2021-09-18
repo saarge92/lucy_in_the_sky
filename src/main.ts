@@ -7,7 +7,6 @@ import {Promise} from "bluebird"
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-   // @ts-ignore
   global.Promise = Promise;
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');

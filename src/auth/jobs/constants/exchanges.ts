@@ -1,0 +1,1 @@
+export const UserExchange = 'users-exchanges';

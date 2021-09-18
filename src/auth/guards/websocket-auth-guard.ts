@@ -16,6 +16,8 @@ export class WebsocketAuthGuard implements CanActivate {
         throw new WsException('Укажите токен безопасности');
       }
       const jwtPayLoad = await this.jwtService.verifyAsync(token);
+      // todo
+      console.log(jwtPayLoad);
     } catch (ex) {
       throw new WsException(ex);
     }

@@ -10,6 +10,7 @@ export class GoodWebSocketGateway implements OnGatewayConnection {
 
   @WebSocketServer() private readonly webSocketServer: Server;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async handleConnection(client: Socket, ...args: any[]): Promise<any> {
     await this.authWebsocket.checkTokenFromSocket(client);
   }

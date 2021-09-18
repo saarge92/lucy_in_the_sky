@@ -9,8 +9,8 @@ import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { AuthWebsocketService } from './services/auth-websocket.service';
-import { MailerModule, MailerService } from '@nestjs-modules/mailer';
-import { UserRegisteredConsumer } from './queues/user-registered.consumer';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { UserRegistered } from './jobs/subscribers/user-registered';
 import { BullModule } from '@nestjs/bull';
 import { USER_REGISTERED } from './constants/email.auth';
 import { Role } from '../user/entity/role.entity';
@@ -39,7 +39,7 @@ import { UserRegisteredGateway } from './gateways/user-registered-gateway';
     }),
   ],
   providers: [...AuthProvider, JwtStrategy, ConfigService, JwtAuthGuard, AuthWebsocketService,
-    UserRegisteredConsumer, UserRegisteredGateway, AdminWebsocketService],
+    UserRegistered, UserRegisteredGateway, AdminWebsocketService],
   exports: [...AuthProvider, JwtModule, AuthWebsocketService, AdminWebsocketService],
 })
 export class AuthModule {

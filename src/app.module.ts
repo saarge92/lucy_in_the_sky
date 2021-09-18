@@ -8,6 +8,8 @@ import { BullModule } from '@nestjs/bull';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { RolesModule } from './roles/roles.module';
+import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { UserExchange } from './auth/jobs/constants/exchanges';
 
 @Module({
   imports: [
@@ -46,6 +48,17 @@ import { RolesModule } from './roles/roles.module';
             strict: true,
           },
         },
+      }),
+    }),
+    RabbitMQModule.forRootAsync(RabbitMQModule, {
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('RABBIT_MQ_URI'),
+        exchanges: [
+          {
+            name: UserExchange,
+            type: 'topic',
+          },
+        ],
       }),
     }),
     UserModule, GoodModule, AuthModule, RolesModule],
