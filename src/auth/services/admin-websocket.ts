@@ -8,8 +8,8 @@ import { IUserService } from '../../user/interfaces/user.service.interface';
 import { Role } from '../../user/entity/role.entity';
 
 @Injectable()
-export class AdminWebsocketService {
-  private readonly logger = new Logger(AdminWebsocketService.name);
+export class AdminWebsocket {
+  private readonly logger = new Logger(AdminWebsocket.name);
   private readonly availableRoles = new Array('Admin');
 
   constructor(private readonly jwtService: JwtService, private readonly configService: ConfigService,

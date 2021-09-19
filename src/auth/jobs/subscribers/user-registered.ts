@@ -1,12 +1,12 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable, Logger } from '@nestjs/common';
+import { Controller, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
-import { UserExchange } from '../constants/exchanges';
-import { UserRegisteredRouting } from '../constants/routing-keys';
+import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { UserRegisteredQueue } from '../constants/queues';
+import { UserRegisteredJobDto } from '../../dto/jobs/user-registered-job-dto';
 
 @Injectable()
+@Controller()
 export class UserRegistered {
   private readonly logger: Logger = new Logger(UserRegistered.name);
 
@@ -14,12 +14,20 @@ export class UserRegistered {
               private readonly configService: ConfigService) {
   }
 
-  @RabbitSubscribe({
-    exchange: UserExchange,
-    routingKey: UserRegisteredRouting,
-    queue: UserRegisteredQueue,
-  })
-  async sendEmailMessage(message: any): Promise<void> {
-    console.log(message);
+  @EventPattern(UserRegisteredQueue)
+  async sendEmailMessage(@Payload() message: Readonly<UserRegisteredJobDto>,
+                         @Ctx() context: RmqContext): Promise<void> {
+    await this.mailService.sendMail({
+      to: message.email,
+      template: 'public/templates/user-register',
+      context: {
+        email: message.email,
+      },
+    }).catch(error => {
+      this.logger.error(error);
+    });
+    const channel = context.getChannelRef();
+    const originalMsg = context.getMessage();
+    channel.ack(originalMsg);
   }
 }

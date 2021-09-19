@@ -8,8 +8,8 @@ import { BullModule } from '@nestjs/bull';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { RolesModule } from './roles/roles.module';
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
-import { UserExchange } from './auth/jobs/constants/exchanges';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [
@@ -48,17 +48,6 @@ import { UserExchange } from './auth/jobs/constants/exchanges';
             strict: true,
           },
         },
-      }),
-    }),
-    RabbitMQModule.forRootAsync(RabbitMQModule, {
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('RABBIT_MQ_URI'),
-        exchanges: [
-          {
-            name: UserExchange,
-            type: 'topic',
-          },
-        ],
       }),
     }),
     UserModule, GoodModule, AuthModule, RolesModule],

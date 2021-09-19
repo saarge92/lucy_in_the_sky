@@ -4,7 +4,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { AdminWebsocketService } from '../services/admin-websocket.service';
+import { AdminWebsocket } from '../services/admin-websocket';
 import { Socket } from 'socket.io';
 import { UseFilters } from '@nestjs/common';
 
@@ -12,7 +12,7 @@ import { UseFilters } from '@nestjs/common';
 export class UserRegisteredGateway implements OnGatewayConnection {
   @WebSocketServer() private readonly webSocketServer;
 
-  constructor(private readonly adminGatewayService: AdminWebsocketService) {
+  constructor(private readonly adminGatewayService: AdminWebsocket) {
   }
 
   @UseFilters(new BaseWsExceptionFilter())

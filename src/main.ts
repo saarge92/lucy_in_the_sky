@@ -3,11 +3,12 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { RedisIoAdapter } from './common/adapters/redis-io-adapter';
-import {Promise} from "bluebird"
+import { ConfigService } from '@nestjs/config';
+import { UserRegisteredQueue } from './auth/jobs/constants/queues';
+import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  global.Promise = Promise;
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
 
@@ -22,7 +23,20 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
 
   app.useWebSocketAdapter(new RedisIoAdapter(app));
+
+  const configService: ConfigService = app.get(ConfigService);
+  app.connectMicroservice({
+    transport: Transport.RMQ,
+    options: {
+      urls: [configService.get<string>('RABBITMQ_URI')],
+      queue: UserRegisteredQueue,
+      queueOptions: {
+        durable: false,
+      },
+    },
+  });
+  await app.startAllMicroservicesAsync();
   await app.listen(process.env.SERVER_PORT);
 }
 
-bootstrap();
+bootstrap().catch(console.log);

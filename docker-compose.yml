@@ -51,7 +51,11 @@ services:
 
   rabbitmq:
     container_name: "lucy-rabbit"
-    image: rabb
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5673:5672"
+    networks:
+      - app-tier
 
 
 

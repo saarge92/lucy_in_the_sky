@@ -11,11 +11,12 @@ import { JwtAuthGuard } from './guards/jwt.guard';
 import { AuthWebsocketService } from './services/auth-websocket.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { UserRegistered } from './jobs/subscribers/user-registered';
-import { BullModule } from '@nestjs/bull';
-import { USER_REGISTERED } from './constants/email.auth';
 import { Role } from '../user/entity/role.entity';
-import { AdminWebsocketService } from './services/admin-websocket.service';
+import { AdminWebsocket } from './services/admin-websocket';
 import { UserRegisteredGateway } from './gateways/user-registered-gateway';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { UserRegisteredRouting } from './jobs/constants/routing-keys';
+import { UserRegisteredQueue } from './jobs/constants/queues';
 
 @Module({
   imports: [
@@ -34,13 +35,28 @@ import { UserRegisteredGateway } from './gateways/user-registered-gateway';
       }),
     }),
     MailerModule,
-    BullModule.registerQueue({
-      name: USER_REGISTERED,
-    }),
+    ClientsModule.registerAsync([
+      {
+        name: UserRegisteredRouting,
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.RMQ,
+          options: {
+            urls: [configService.get<string>('RABBITMQ_URI')],
+            queue: UserRegisteredQueue,
+            queueOptions: {
+              durable: false,
+            },
+          },
+        }),
+        inject: [ConfigService],
+      },
+    ]),
   ],
+  controllers: [UserRegistered],
   providers: [...AuthProvider, JwtStrategy, ConfigService, JwtAuthGuard, AuthWebsocketService,
-    UserRegistered, UserRegisteredGateway, AdminWebsocketService],
-  exports: [...AuthProvider, JwtModule, AuthWebsocketService, AdminWebsocketService],
+    UserRegistered, UserRegisteredGateway, AdminWebsocket],
+  exports: [...AuthProvider, JwtModule, AuthWebsocketService, AdminWebsocket],
 })
 export class AuthModule {
 }

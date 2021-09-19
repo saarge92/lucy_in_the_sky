@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, Logger } from '@nestjs/common';
 import { USER_SERVICE } from '../../user/constants/providers.constants';
 import { IUserService } from '../../user/interfaces/user.service.interface';
 import { UserRegisterDto } from '../../user/dto/user.register.dto';
@@ -8,29 +8,28 @@ import { IAuthService } from '../contracts/auth.service.interface';
 import { UserLoginDto } from '../../user/dto/user.login.dto';
 import { UserAuthenticated } from '../../user/responses/user_authenticated.response';
 import { compare } from 'bcrypt';
-import { InjectQueue } from '@nestjs/bull';
-import { USER_REGISTERED } from '../constants/email.auth';
-import { Queue } from 'bull';
-import { Connection } from 'typeorm';
 import { Role } from '../../user/entity/role.entity';
 import { UserInRoleEntity } from '../../user/entity/user-in-role.entity';
 import { UserRegisteredGateway } from '../gateways/user-registered-gateway';
-import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { UserExchange } from '../jobs/constants/exchanges';
-import { UserRegisteredRouting } from '../jobs/constants/routing-keys';
 import { UserRegisteredJobDto } from '../dto/jobs/user-registered-job-dto';
+import { Connection } from 'typeorm';
+import { UserRegisteredRouting } from '../jobs/constants/routing-keys';
+import { ClientProxy } from '@nestjs/microservices';
+import { UserRegisteredQueue } from '../jobs/constants/queues';
+
 
 /**
  * @author Serdar Durdyev
  */
 @Injectable()
-export class AuthService implements IAuthService {
+export class Auth implements IAuthService {
+  private readonly logger: Logger = new Logger(Auth.name);
+
   constructor(@Inject(USER_SERVICE) private readonly userService: IUserService,
               private readonly jwtService: JwtService,
               private readonly connection: Connection,
-              @InjectQueue(USER_REGISTERED) private readonly userRegisterQueue: Queue,
               private readonly userRegisteredGateway: UserRegisteredGateway,
-              private readonly amqpConnection: AmqpConnection) {
+              @Inject(UserRegisteredRouting) private readonly client: ClientProxy) {
   }
 
   public async registerUser(userRegisterDto: UserRegisterDto): Promise<UserCreatedResponse> {
@@ -45,21 +44,15 @@ export class AuthService implements IAuthService {
 
       const token = await this.jwtService.signAsync({ user: createdUser.email });
 
-      await this.userRegisterQueue.add({
-        email: createdUser.email,
-      });
-
-      await this.userRegisteredGateway.userHasRegistered([createdUser.email, createdUser.id.toString()]);
+      await this.userRegisteredGateway.userHasRegistered(
+        [
+          createdUser.email, createdUser.id.toString(),
+        ],
+      );
       const userRegisteredDto: UserRegisteredJobDto = {
         email: createdUser.email,
       };
-
-      await this.amqpConnection.publish(
-        UserExchange,
-        UserRegisteredRouting,
-        userRegisteredDto,
-      );
-
+      await this.client.emit(UserRegisteredQueue, userRegisteredDto);
       return {
         token,
         user: createdUser.email,

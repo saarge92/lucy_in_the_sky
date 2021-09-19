@@ -1,10 +1,10 @@
 import { Provider } from '@nestjs/common';
 import { AUTH_SERVICE } from '../constants/auth.provider';
-import { AuthService } from '../services/auth.service';
+import { Auth } from '../services/auth';
 
 export const AuthProvider: Provider[] = [
   {
     provide: AUTH_SERVICE,
-    useClass: AuthService,
+    useClass: Auth,
   },
 ];
